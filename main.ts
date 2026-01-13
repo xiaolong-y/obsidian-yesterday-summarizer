@@ -376,7 +376,7 @@ class YesterdaySummarizerSettingTab extends PluginSettingTab {
     // Ollama endpoint
     new Setting(containerEl)
       .setName('Ollama endpoint')
-      .setDesc('Ollama API endpoint (default: http://localhost:11434)')
+      .setDesc('The Ollama API endpoint.')
       .addText(text => text
         .setPlaceholder('http://localhost:11434')
         .setValue(this.plugin.settings.ollamaEndpoint)
@@ -388,7 +388,7 @@ class YesterdaySummarizerSettingTab extends PluginSettingTab {
     // Ollama model
     new Setting(containerEl)
       .setName('Ollama model')
-      .setDesc('Model to use with Ollama (e.g., llama3.2, mistral, phi3)')
+      .setDesc('The model name to use.')
       .addText(text => text
         .setPlaceholder('llama3.2')
         .setValue(this.plugin.settings.ollamaModel)
@@ -441,7 +441,7 @@ class YesterdaySummarizerSettingTab extends PluginSettingTab {
     // Target section
     new Setting(containerEl)
       .setName('Target section')
-      .setDesc('Section header where auto-summary will be inserted (e.g., "## Yesterday\'s Highlights")')
+      .setDesc('The section header where the auto-summary will be inserted.')
       .addText(text => text
         .setPlaceholder("## Yesterday's Highlights")
         .setValue(this.plugin.settings.targetSection)
