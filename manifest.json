@@ -5,6 +5,6 @@
   "minAppVersion": "1.0.0",
   "description": "Summarize yesterday's daily note using local LLM (Ollama) to generate actionable insights for today's planning",
   "author": "Xiaolong Yang",
-  "authorUrl": "https://github.com/peteryang",
+  "authorUrl": "https://github.com/xiaolong-y",
   "isDesktopOnly": true
 }

@@ -104,5 +104,5 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ## Support
 
-- [Report issues](https://github.com/peteryang/obsidian-yesterday-summarizer/issues)
-- [Source code](https://github.com/peteryang/obsidian-yesterday-summarizer)
+- [Report issues](https://github.com/xiaolong-y/obsidian-yesterday-summarizer/issues)
+- [Source code](https://github.com/xiaolong-y/obsidian-yesterday-summarizer)
