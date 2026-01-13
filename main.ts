@@ -95,7 +95,7 @@ export default class YesterdaySummarizerPlugin extends Plugin {
     // Command: Summarize Yesterday (uses Ollama)
     this.addCommand({
       id: 'summarize-yesterday',
-      name: 'Summarize Yesterday',
+      name: 'Summarize yesterday',
       editorCallback: async (editor: Editor, view: MarkdownView) => {
         await this.summarizeYesterday(editor, view);
       }
@@ -109,17 +109,15 @@ export default class YesterdaySummarizerPlugin extends Plugin {
       this.registerEvent(
         this.app.workspace.on('file-open', (file: TFile | null) => {
           if (file) {
-            this.handleFileOpen(file);
+            void this.handleFileOpen(file);
           }
         })
       );
     }
-
-    console.log('Yesterday Summarizer plugin loaded');
   }
 
   onunload() {
-    console.log('Yesterday Summarizer plugin unloaded');
+    // Plugin unloaded
   }
 
   async loadSettings() {
@@ -162,7 +160,6 @@ export default class YesterdaySummarizerPlugin extends Plugin {
 
     let notePath: string | null = null;
     for (const path of formats) {
-      console.log(`[Yesterday Summarizer] Trying: ${path}`);
       const file = this.app.vault.getAbstractFileByPath(path);
       if (file) {
         notePath = path;
@@ -175,8 +172,6 @@ export default class YesterdaySummarizerPlugin extends Plugin {
       return null;
     }
 
-    console.log(`[Yesterday Summarizer] Found: ${notePath}`);
-
     try {
       const content = await this.app.vault.adapter.read(notePath);
       // Strip frontmatter (everything between first two ---)
@@ -188,7 +183,6 @@ export default class YesterdaySummarizerPlugin extends Plugin {
         bodyContent = content;
       }
 
-      console.log(`[Yesterday Summarizer] Read ${bodyContent.length} chars from ${targetDate}`);
       return { date: targetDate, content: bodyContent };
     } catch (error) {
       new Notice(`Error reading note: ${error}`);
@@ -215,9 +209,6 @@ export default class YesterdaySummarizerPlugin extends Plugin {
 
     // Step 2: Calculate "yesterday" relative to current file's date
     const yesterdayDate = this.getDayBefore(currentDate);
-
-    console.log(`[Yesterday Summarizer] Current file: ${currentFilename} (${currentDate})`);
-    console.log(`[Yesterday Summarizer] Yesterday: ${yesterdayDate}`);
 
     const loadingNotice = new Notice(`Reading ${yesterdayDate}...`, 0);
 
@@ -275,8 +266,6 @@ export default class YesterdaySummarizerPlugin extends Plugin {
       return;
     }
 
-    console.log(`[Yesterday Summarizer] Daily note opened: ${file.path}`);
-
     // Read the file content
     const content = await this.app.vault.read(file);
 
@@ -284,7 +273,6 @@ export default class YesterdaySummarizerPlugin extends Plugin {
     const targetSection = this.settings.targetSection;
     const sectionIndex = content.indexOf(targetSection);
     if (sectionIndex === -1) {
-      console.log(`[Yesterday Summarizer] Target section "${targetSection}" not found`);
       return;
     }
 
@@ -301,13 +289,10 @@ export default class YesterdaySummarizerPlugin extends Plugin {
         // There's content after the header that isn't another section
         const firstNonWhitespace = contentAfterHeader.trim();
         if (firstNonWhitespace && !firstNonWhitespace.startsWith('##')) {
-          console.log(`[Yesterday Summarizer] Section already has content, skipping auto-summarize`);
           return;
         }
       }
     }
-
-    console.log(`[Yesterday Summarizer] Section is empty, triggering auto-summarize`);
 
     // Get yesterday's date based on this file
     const yesterdayDate = this.getDayBefore(dateMatch);
@@ -388,11 +373,9 @@ class YesterdaySummarizerSettingTab extends PluginSettingTab {
     const { containerEl } = this;
     containerEl.empty();
 
-    containerEl.createEl('h2', { text: 'Yesterday Summarizer Settings' });
-
-    // Ollama Endpoint
+    // Ollama endpoint
     new Setting(containerEl)
-      .setName('Ollama Endpoint')
+      .setName('Ollama endpoint')
       .setDesc('Ollama API endpoint (default: http://localhost:11434)')
       .addText(text => text
         .setPlaceholder('http://localhost:11434')
@@ -402,9 +385,9 @@ class YesterdaySummarizerSettingTab extends PluginSettingTab {
           await this.plugin.saveSettings();
         }));
 
-    // Ollama Model
+    // Ollama model
     new Setting(containerEl)
-      .setName('Ollama Model')
+      .setName('Ollama model')
       .setDesc('Model to use with Ollama (e.g., llama3.2, mistral, phi3)')
       .addText(text => text
         .setPlaceholder('llama3.2')
@@ -414,9 +397,9 @@ class YesterdaySummarizerSettingTab extends PluginSettingTab {
           await this.plugin.saveSettings();
         }));
 
-    // Daily Notes Folder
+    // Daily notes folder
     new Setting(containerEl)
-      .setName('Daily Notes Folder')
+      .setName('Daily notes folder')
       .setDesc('Folder containing your daily notes')
       .addText(text => text
         .setPlaceholder('10_daily')
@@ -426,9 +409,9 @@ class YesterdaySummarizerSettingTab extends PluginSettingTab {
           await this.plugin.saveSettings();
         }));
 
-    // Output Mode
+    // Output mode
     new Setting(containerEl)
-      .setName('Output Mode')
+      .setName('Output mode')
       .setDesc('Where to put the generated summary (for manual command)')
       .addDropdown(dropdown => dropdown
         .addOption('cursor', 'Insert at cursor')
@@ -439,11 +422,14 @@ class YesterdaySummarizerSettingTab extends PluginSettingTab {
           await this.plugin.saveSettings();
         }));
 
-    containerEl.createEl('h3', { text: 'Auto-Summarization' });
-
-    // Auto-Summarize Toggle
+    // Auto-summarization heading
     new Setting(containerEl)
-      .setName('Auto-Summarize on File Open')
+      .setName('Auto-summarization')
+      .setHeading();
+
+    // Auto-summarize toggle
+    new Setting(containerEl)
+      .setName('Auto-summarize on file open')
       .setDesc('Automatically summarize yesterday when opening a daily note (requires restart)')
       .addToggle(toggle => toggle
         .setValue(this.plugin.settings.autoSummarize)
@@ -452,9 +438,9 @@ class YesterdaySummarizerSettingTab extends PluginSettingTab {
           await this.plugin.saveSettings();
         }));
 
-    // Target Section
+    // Target section
     new Setting(containerEl)
-      .setName('Target Section')
+      .setName('Target section')
       .setDesc('Section header where auto-summary will be inserted (e.g., "## Yesterday\'s Highlights")')
       .addText(text => text
         .setPlaceholder("## Yesterday's Highlights")
