@@ -376,7 +376,7 @@ class YesterdaySummarizerSettingTab extends PluginSettingTab {
     // Ollama endpoint
     new Setting(containerEl)
       .setName('Ollama endpoint')
-      .setDesc('Server address for Ollama.')
+      .setDesc('Server address.')
       .addText(text => text
         .setValue(this.plugin.settings.ollamaEndpoint)
         .onChange(async (value) => {
