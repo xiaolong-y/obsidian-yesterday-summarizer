@@ -376,9 +376,8 @@ class YesterdaySummarizerSettingTab extends PluginSettingTab {
     // Ollama endpoint
     new Setting(containerEl)
       .setName('Ollama endpoint')
-      .setDesc('The Ollama API endpoint.')
+      .setDesc('Server address for Ollama.')
       .addText(text => text
-        .setPlaceholder('http://localhost:11434')
         .setValue(this.plugin.settings.ollamaEndpoint)
         .onChange(async (value) => {
           this.plugin.settings.ollamaEndpoint = value;
@@ -388,9 +387,8 @@ class YesterdaySummarizerSettingTab extends PluginSettingTab {
     // Ollama model
     new Setting(containerEl)
       .setName('Ollama model')
-      .setDesc('The model name to use.')
+      .setDesc('Name of the model to use.')
       .addText(text => text
-        .setPlaceholder('llama3.2')
         .setValue(this.plugin.settings.ollamaModel)
         .onChange(async (value) => {
           this.plugin.settings.ollamaModel = value;
@@ -400,7 +398,7 @@ class YesterdaySummarizerSettingTab extends PluginSettingTab {
     // Daily notes folder
     new Setting(containerEl)
       .setName('Daily notes folder')
-      .setDesc('Folder containing your daily notes')
+      .setDesc('Folder containing your daily notes.')
       .addText(text => text
         .setPlaceholder('10_daily')
         .setValue(this.plugin.settings.dailyNotesFolder)
@@ -412,7 +410,7 @@ class YesterdaySummarizerSettingTab extends PluginSettingTab {
     // Output mode
     new Setting(containerEl)
       .setName('Output mode')
-      .setDesc('Where to put the generated summary (for manual command)')
+      .setDesc('Where to put the generated summary.')
       .addDropdown(dropdown => dropdown
         .addOption('cursor', 'Insert at cursor')
         .addOption('clipboard', 'Copy to clipboard')
@@ -430,7 +428,7 @@ class YesterdaySummarizerSettingTab extends PluginSettingTab {
     // Auto-summarize toggle
     new Setting(containerEl)
       .setName('Auto-summarize on file open')
-      .setDesc('Automatically summarize yesterday when opening a daily note (requires restart)')
+      .setDesc('Automatically summarize yesterday when opening a daily note.')
       .addToggle(toggle => toggle
         .setValue(this.plugin.settings.autoSummarize)
         .onChange(async (value) => {
@@ -441,9 +439,8 @@ class YesterdaySummarizerSettingTab extends PluginSettingTab {
     // Target section
     new Setting(containerEl)
       .setName('Target section')
-      .setDesc('The section header where the auto-summary will be inserted.')
+      .setDesc('Section header where the auto-summary will be inserted.')
       .addText(text => text
-        .setPlaceholder("## Yesterday's Highlights")
         .setValue(this.plugin.settings.targetSection)
         .onChange(async (value) => {
           this.plugin.settings.targetSection = value;
