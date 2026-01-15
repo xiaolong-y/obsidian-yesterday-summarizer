@@ -14,3 +14,7 @@ Thumbs.db
 
 # npm
 package-lock.json
+
+# Local data
+data.json
+*.backup
