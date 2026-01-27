@@ -400,7 +400,15 @@ function buildContextHints(content: string): string {
   for (const key of metadataKeys) {
     const value = frontmatter[key];
     if (value !== undefined && value !== '' && value !== null) {
-      const stringValue = typeof value === 'object' ? JSON.stringify(value) : String(value);
+      // Safely convert value to string, handling objects properly
+      let stringValue: string;
+      if (typeof value === 'string') {
+        stringValue = value;
+      } else if (typeof value === 'number' || typeof value === 'boolean') {
+        stringValue = String(value);
+      } else {
+        stringValue = JSON.stringify(value);
+      }
       foundMeta.push(`${key}: ${stringValue}`);
     }
   }
@@ -666,7 +674,7 @@ export default class YesterdaySummarizerPlugin extends Plugin {
     // Command: Test Ollama connection
     this.addCommand({
       id: 'test-connection',
-      name: 'Test Ollama connection',
+      name: 'Test ollama connection',
       callback: async () => {
         await this.testConnection();
       }
@@ -1297,7 +1305,7 @@ ${day2Result.content}
       }
 
       const { date, content } = result;
-      loadingNotice.setMessage(`Summarizing ${date} via Ollama...`);
+      loadingNotice.setMessage(`Summarizing ${date} via ollama...`);
 
       // Step 4: Build prompt with date context, detail modifier, and context hints
       const detailMod = DETAIL_MODIFIERS[this.settings.detailLevel];
@@ -1365,7 +1373,7 @@ ${day2Result.content}
         return;
       }
 
-      loadingNotice.setMessage(`Summarizing via Ollama...`);
+      loadingNotice.setMessage(`Summarizing via ollama...`);
 
       const detailMod = DETAIL_MODIFIERS[this.settings.detailLevel];
       const contextHints = buildContextHints(cleanContent);
@@ -1493,7 +1501,7 @@ ${day2Result.content}
       }
 
       const loadingNotice = new Notice(`Auto-summarizing ${yesterdayDate}...`, 0);
-      loadingNotice.setMessage(`Summarizing ${date} via Ollama...`);
+      loadingNotice.setMessage(`Summarizing ${date} via ollama...`);
 
       // Build prompt and call Ollama with adaptive token limit
       const detailMod = DETAIL_MODIFIERS[this.settings.detailLevel];
@@ -1542,7 +1550,7 @@ ${day2Result.content}
 
   // Test Ollama connection and model availability
   async testConnection() {
-    const loadingNotice = new Notice('Testing Ollama connection...', 0);
+    const loadingNotice = new Notice('Testing ollama connection...', 0);
 
     try {
       // Test endpoint reachability
