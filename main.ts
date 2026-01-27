@@ -678,7 +678,7 @@ export default class YesterdaySummarizerPlugin extends Plugin {
       this.registerEvent(
         this.app.workspace.on('file-open', (file: TFile | null) => {
           if (file) {
-            void this.handleFileOpen(file);
+            this.handleFileOpen(file).catch(() => { /* handled */ });
           }
         })
       );
@@ -1487,8 +1487,7 @@ ${day2Result.content}
 
       if (cachedHash === contentHash) {
         // Content unchanged, skip summarization silently
-        console.log(`[Yesterday Summarizer] Skipping ${date} - content unchanged`);
-        return;
+                return;
       }
 
       const loadingNotice = new Notice(`Auto-summarizing ${yesterdayDate}...`, 0);
@@ -1875,12 +1874,12 @@ class YesterdaySummarizerSettingTab extends PluginSettingTab {
     this.plugin = plugin;
   }
 
-  async display(): Promise<void> {
+  display(): void {
     const { containerEl } = this;
     containerEl.empty();
 
     // Fetch available models in background
-    this.availableModels = await fetchAvailableModels(this.plugin.settings.ollamaEndpoint);
+    fetchAvailableModels(this.plugin.settings.ollamaEndpoint).then(models => { this.availableModels = models; });
 
     // Ollama endpoint
     new Setting(containerEl)
