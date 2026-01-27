@@ -398,8 +398,10 @@ function buildContextHints(content: string): string {
   const metadataKeys = ['mood', 'energy', 'productivity', 'sleep', 'exercise', 'focus'];
   const foundMeta: string[] = [];
   for (const key of metadataKeys) {
-    if (frontmatter[key] !== undefined && frontmatter[key] !== '') {
-      foundMeta.push(`${key}: ${frontmatter[key]}`);
+    const value = frontmatter[key];
+    if (value !== undefined && value !== '' && value !== null) {
+      const stringValue = typeof value === 'object' ? JSON.stringify(value) : String(value);
+      foundMeta.push(`${key}: ${stringValue}`);
     }
   }
   if (foundMeta.length > 0) {
@@ -1128,7 +1130,7 @@ export default class YesterdaySummarizerPlugin extends Plugin {
     const loadingNotice = new Notice(`Reading ${days} days (${startDate} to ${endDate})...`, 0);
 
     try {
-      const { found, missing } = await this.readWeekNotes(dates);
+      const { found } = await this.readWeekNotes(dates);
 
       if (found.size === 0) {
         loadingNotice.hide();
@@ -1750,11 +1752,11 @@ ${day2Result.content}
 
         // Extract summary sections
         const summaryPatterns = [
-          /## Summary of \d{4}-\d{2}-\d{2}\n\n([\s\S]*?)(?=\n## |\n---|\Z)/g,
-          /## Yesterday's Highlights\n\n([\s\S]*?)(?=\n## |\n---|\Z)/g,
-          /## Week Summary[^\n]*\n\n([\s\S]*?)(?=\n## |\n---|\Z)/g,
-          /## Monthly Summary[^\n]*\n\n([\s\S]*?)(?=\n## |\n---|\Z)/g,
-          /## Today's Summary[^\n]*\n\n([\s\S]*?)(?=\n## |\n---|\Z)/g
+          /## Summary of \d{4}-\d{2}-\d{2}\n\n([\s\S]*?)(?=\n## |\n---|$)/g,
+          /## Yesterday's Highlights\n\n([\s\S]*?)(?=\n## |\n---|$)/g,
+          /## Week Summary[^\n]*\n\n([\s\S]*?)(?=\n## |\n---|$)/g,
+          /## Monthly Summary[^\n]*\n\n([\s\S]*?)(?=\n## |\n---|$)/g,
+          /## Today's Summary[^\n]*\n\n([\s\S]*?)(?=\n## |\n---|$)/g
         ];
 
         for (const pattern of summaryPatterns) {
@@ -1879,7 +1881,7 @@ class YesterdaySummarizerSettingTab extends PluginSettingTab {
     containerEl.empty();
 
     // Fetch available models in background
-    fetchAvailableModels(this.plugin.settings.ollamaEndpoint).then(models => { this.availableModels = models; });
+    void fetchAvailableModels(this.plugin.settings.ollamaEndpoint).then(models => { this.availableModels = models; }).catch(() => { /* ignore */ });
 
     // Ollama endpoint
     new Setting(containerEl)
