@@ -1897,13 +1897,13 @@ class YesterdaySummarizerSettingTab extends PluginSettingTab {
       .setDesc('Server address.')
       .addText(text => text
         .setValue(this.plugin.settings.ollamaEndpoint)
-        .onChange(async (value) => {
+        .onChange((value) => { void (async () => {
           this.plugin.settings.ollamaEndpoint = value;
           await this.plugin.saveSettings();
           // Refresh models when endpoint changes
           this.availableModels = await fetchAvailableModels(value);
           this.display();
-        }));
+        })(); }));
 
     // Ollama model
     const modelSetting = new Setting(containerEl)
@@ -1945,12 +1945,12 @@ class YesterdaySummarizerSettingTab extends PluginSettingTab {
           dropdown.setValue(this.availableModels[0]);
         }
 
-        dropdown.onChange(async (value) => {
+        dropdown.onChange((value) => { void (async () => {
           if (value !== '---') {
             this.plugin.settings.ollamaModel = value;
             await this.plugin.saveSettings();
           }
-        });
+        })(); });
 
         return dropdown;
       });
@@ -1960,12 +1960,12 @@ class YesterdaySummarizerSettingTab extends PluginSettingTab {
     modelSetting.addText(text => text
       .setPlaceholder('Or enter custom model...')
       .setValue(this.availableModels.includes(this.plugin.settings.ollamaModel) ? '' : this.plugin.settings.ollamaModel)
-      .onChange(async (value) => {
+      .onChange((value) => { void (async () => {
         if (value.trim()) {
           this.plugin.settings.ollamaModel = value.trim();
           await this.plugin.saveSettings();
         }
-      }));
+      })(); }));
 
     // Daily notes folder
     new Setting(containerEl)
@@ -1974,10 +1974,10 @@ class YesterdaySummarizerSettingTab extends PluginSettingTab {
       .addText(text => text
         .setPlaceholder('10_daily')
         .setValue(this.plugin.settings.dailyNotesFolder)
-        .onChange(async (value) => {
+        .onChange((value) => { void (async () => {
           this.plugin.settings.dailyNotesFolder = value;
           await this.plugin.saveSettings();
-        }));
+        })(); }));
 
     // Output mode
     new Setting(containerEl)
@@ -1987,10 +1987,10 @@ class YesterdaySummarizerSettingTab extends PluginSettingTab {
         .addOption('cursor', 'Insert at cursor')
         .addOption('clipboard', 'Copy to clipboard')
         .setValue(this.plugin.settings.outputMode)
-        .onChange(async (value: 'cursor' | 'clipboard') => {
+        .onChange((value: 'cursor' | 'clipboard') => { void (async () => {
           this.plugin.settings.outputMode = value;
           await this.plugin.saveSettings();
-        }));
+        })(); }));
 
     // Detail level
     new Setting(containerEl)
@@ -2001,10 +2001,10 @@ class YesterdaySummarizerSettingTab extends PluginSettingTab {
         .addOption('standard', 'Standard (balanced)')
         .addOption('detailed', 'Detailed (comprehensive)')
         .setValue(this.plugin.settings.detailLevel)
-        .onChange(async (value: 'concise' | 'standard' | 'detailed') => {
+        .onChange((value: 'concise' | 'standard' | 'detailed') => { void (async () => {
           this.plugin.settings.detailLevel = value;
           await this.plugin.saveSettings();
-        }));
+        })(); }));
 
     // Auto-summarization heading
     new Setting(containerEl)
@@ -2017,10 +2017,10 @@ class YesterdaySummarizerSettingTab extends PluginSettingTab {
       .setDesc('Automatically summarize yesterday when opening a daily note.')
       .addToggle(toggle => toggle
         .setValue(this.plugin.settings.autoSummarize)
-        .onChange(async (value) => {
+        .onChange((value) => { void (async () => {
           this.plugin.settings.autoSummarize = value;
           await this.plugin.saveSettings();
-        }));
+        })(); }));
 
     // Target section
     new Setting(containerEl)
@@ -2028,10 +2028,10 @@ class YesterdaySummarizerSettingTab extends PluginSettingTab {
       .setDesc('Section header where the auto-summary will be inserted.')
       .addText(text => text
         .setValue(this.plugin.settings.targetSection)
-        .onChange(async (value) => {
+        .onChange((value) => { void (async () => {
           this.plugin.settings.targetSection = value;
           await this.plugin.saveSettings();
-        }));
+        })(); }));
 
     // Weekly summarization heading
     new Setting(containerEl)
@@ -2046,10 +2046,10 @@ class YesterdaySummarizerSettingTab extends PluginSettingTab {
         .addOption('monday', 'Monday')
         .addOption('sunday', 'Sunday')
         .setValue(this.plugin.settings.weekStartDay)
-        .onChange(async (value: 'monday' | 'sunday') => {
+        .onChange((value: 'monday' | 'sunday') => { void (async () => {
           this.plugin.settings.weekStartDay = value;
           await this.plugin.saveSettings();
-        }));
+        })(); }));
 
     // Weekly target section
     new Setting(containerEl)
@@ -2057,10 +2057,10 @@ class YesterdaySummarizerSettingTab extends PluginSettingTab {
       .setDesc('Section header for weekly summary output.')
       .addText(text => text
         .setValue(this.plugin.settings.weeklyTargetSection)
-        .onChange(async (value) => {
+        .onChange((value) => { void (async () => {
           this.plugin.settings.weeklyTargetSection = value;
           await this.plugin.saveSettings();
-        }));
+        })(); }));
 
     // Statistics heading
     new Setting(containerEl)
@@ -2088,11 +2088,11 @@ class YesterdaySummarizerSettingTab extends PluginSettingTab {
       .addButton(button => button
         .setButtonText('Reset')
         .setWarning()
-        .onClick(async () => {
+        .onClick(() => { void (async () => {
           this.plugin.settings.stats = { ...DEFAULT_SETTINGS.stats };
           await this.plugin.saveSettings();
           this.display(); // Refresh the display
           new Notice('Statistics reset');
-        }));
+        })(); }));
   }
 }
